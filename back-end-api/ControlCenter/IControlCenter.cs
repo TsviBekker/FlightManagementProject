@@ -1,0 +1,16 @@
+﻿using back_end_api.Repository.Arriving;
+using back_end_api.Repository.Departing;
+using back_end_api.Repository.FlightRepo;
+using back_end_api.Repository.StationRepo;
+
+namespace back_end_api.ControlCenter
+{
+    public interface IControlCenter : IDisposable
+    { //Unit of work design pattern
+        IArrivingFlightsRepository ArrivingFlights { get; }
+        IDepartingFlightsRepository DepartingFlights { get; }
+        IFlightRepository Flights { get; }
+        IStationRepository Stations { get; }
+        Task<int> Complete();
+    }
+}
