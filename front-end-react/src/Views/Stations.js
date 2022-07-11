@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useRef } from "react";
 import { useEffect, useState } from "react";
 import { StationHistory } from "../Components/Modal/Modal";
 import { BackendApi } from "../Constants/Constants";
@@ -17,15 +17,21 @@ export const Stations = () => {
   const [stations, setStations] = useState([]);
 
   useEffect(() => {
-    fetch(`${BackendApi}BusinessLogic/stations-overview`)
-      .then((res) => res.json())
-      .then((data) => setStations(data))
-      .catch((err) => console.log(err));
-  }, []);
+    var timout = setTimeout(() => {
+      fetch(`${BackendApi}BusinessLogic/stations-overview`)
+        .then((res) => res.json())
+        .then((data) => {
+          console.log("called");
+          return setStations(data);
+        })
+        .catch((err) => console.log(err));
+    }, 1000);
+    return () => clearTimeout(timout);
+  }, [stations]);
 
   // const stations = useContext(StationsContext);
 
-  console.log(stations);
+  // console.log(stations);
 
   return (
     <div>
@@ -58,22 +64,33 @@ export const Stations = () => {
 
 const Station = ({ station, onClick, setStations }) => {
   const [time, setTime] = useState(station.flightInStation?.prepTime || 0);
+  // const [init, setInit] = useState(false);
 
   useEffect(() => {
     setTimeout(() => {
       time > 0 && setTime(time - 1);
       //ADD HTTP REQUEST ==> SENDING FLIGHT AWAY FROM STATION
       if (time <= 0 && station.flightInStation) {
-        releaseFlightFrom(station.flightInStation.flightId, station.stationId);
-        sendFlightTo(station.flightInStation.flightId, station.stationId + 1);
-        receiveFlightAt(
-          station.flightInStation.flightId,
-          station.stationId + 1
-        );
-        fetch(`${BackendApi}BusinessLogic/stations-overview`)
-          .then((res) => res.json())
-          .then((data) => setStations(data))
-          .catch((err) => console.log(err));
+        //IIFE
+        (async () => {
+          await releaseFlightFrom(
+            station.flightInStation.flightId,
+            station.stationId
+          );
+          await sendFlightTo(
+            station.flightInStation.flightId,
+            station.stationId + 1
+          );
+          await receiveFlightAt(
+            station.flightInStation.flightId,
+            station.stationId + 1
+          );
+          var response = await fetch(
+            `${BackendApi}BusinessLogic/stations-overview`
+          );
+          var data = await response.json();
+          setStations(data);
+        })();
       }
     }, 1000);
   }, [time]);

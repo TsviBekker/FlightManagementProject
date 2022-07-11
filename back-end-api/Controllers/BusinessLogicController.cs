@@ -32,7 +32,7 @@ namespace back_end_api.Controllers
             controlCenter.Stations.Update(station);
             //2. update arriving flight to done and update datetime
             var af = await controlCenter.ArrivingFlights.GetByStationAndFlight(stationId, flightId);
-            if (af == null) throw new Exception("NO AF FOUND");
+            if (af == null) throw new Exception("NO AF FOUND"); //HANDLE EXCEPTIONS LATER
             af.HasArrived = true;
             af.ArrivedAt = DateTime.Now;
             controlCenter.ArrivingFlights.Update(af);
@@ -40,7 +40,8 @@ namespace back_end_api.Controllers
             await controlCenter.DepartingFlights.Add(new DepartingFlight()
             {
                 FlightId = flightId,
-                StationId = stationId
+                StationId = stationId,
+                HasDeparted = false
             });
             //4. save changes
             await controlCenter.Complete();
@@ -59,12 +60,16 @@ namespace back_end_api.Controllers
             {
                 FlightId = flightId,
                 StationId = stationId,
+                HasArrived = false
             });
             ////2. update next station's flight ?!?!?! (should it be done now or once plane arrives)
-            //station.FlightId = flightId;
-            //controlCenter.Stations.Update(station);
+            station.FlightId = flightId;
+            flight.StationId = stationId;
+            controlCenter.Flights.Update(flight);
+            controlCenter.Stations.Update(station);
             //3. save changes
             await controlCenter.Complete();
+
             return Ok();
         }
 
@@ -90,6 +95,7 @@ namespace back_end_api.Controllers
             await controlCenter.Complete();
             return Ok();
         }
+
         [HttpGet("stations-overview")]
         public async Task<ActionResult<IEnumerable<StationOverviewDto>>> GetStations()
         {
