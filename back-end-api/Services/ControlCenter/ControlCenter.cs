@@ -8,10 +8,13 @@ namespace back_end_api.ControlCenter
 {
     public class ControlCenter : IControlCenter
     {
+        //Repositories
         public IArrivingFlightsRepository ArrivingFlights { get; private set; }
         public IDepartingFlightsRepository DepartingFlights { get; private set; }
         public IFlightRepository Flights { get; private set; }
         public IStationRepository Stations { get; private set; }
+
+        //Context
         private readonly FlightsDbContext context;
         //Ctor
         public ControlCenter(FlightsDbContext context)
@@ -26,8 +29,8 @@ namespace back_end_api.ControlCenter
 
         public void Dispose()
         {
-            GC.SuppressFinalize(context);
-            context.Dispose();
+            //GC.SuppressFinalize(context);
+            //context.Dispose();
         }
     }
 }

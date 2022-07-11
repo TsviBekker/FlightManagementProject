@@ -1,4 +1,7 @@
 using back_end_api.Context;
+using back_end_api.ControlCenter;
+using back_end_api.Services;
+using back_end_api.Services.FlightManager;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +25,16 @@ builder.Services.AddCors(options =>
         builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
     });
 });
+
+
+builder.Services.AddScoped<IControlCenter, ControlCenter>();
+builder.Services.AddScoped<IFlightManager, FlightManager>();
+
+builder.Services.AddSingleton<IFlightSimulatorService, FlightSimulatorService>();
+builder.Services.AddHostedService<SimulatorService>();
+
+
+
 
 var app = builder.Build();
 

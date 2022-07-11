@@ -8,21 +8,23 @@ namespace back_end_api.Repository.Models
 {
     public partial class Station
     {
-        public Station()
-        {
-            ArrivingFlights = new HashSet<ArrivingFlight>();
-            DepartingFlights = new HashSet<DepartingFlight>();
-        }
-        
+        //public Station()
+        //{
+        //    ArrivingFlights = new HashSet<ArrivingFlight>();
+        //    DepartingFlights = new HashSet<DepartingFlight>();
+        //}
+
         [Key]
         public int StationId { get; set; }
         [StringLength(20)]
         public string Name { get; set; } = null!;
-        public bool IsAvailable { get; set; }
+        //public bool IsAvailable { get; set; }
+        [ForeignKey("FlightId")]
+        public int? FlightId { get; set; }
 
-        [InverseProperty("Station")]
-        public virtual ICollection<ArrivingFlight> ArrivingFlights { get; set; }
-        [InverseProperty("Station")]
-        public virtual ICollection<DepartingFlight> DepartingFlights { get; set; }
+        //[InverseProperty("Station")]
+        //public virtual ICollection<ArrivingFlight> ArrivingFlights { get; set; }
+        //[InverseProperty("Station")]
+        //public virtual ICollection<DepartingFlight> DepartingFlights { get; set; }
     }
 }

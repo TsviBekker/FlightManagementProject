@@ -15,12 +15,12 @@ namespace back_end_api.Repository.Models
         [ForeignKey("StationId")]
         public int StationId { get; set; }
         public bool HasArrived { get; set; }
-
-        [ForeignKey("FlightId")]
-        [InverseProperty("ArrivingFlights")]
-        public virtual Flight Flight { get; set; } = null!;
-        [ForeignKey("StationId")]
-        [InverseProperty("ArrivingFlights")]
-        public virtual Station Station { get; set; } = null!;
+        public DateTime? ArrivedAt { get; set; }
+        //[ForeignKey("FlightId")]
+        //[InverseProperty("ArrivingFlights")]
+        //public virtual Flight Flight { get; set; } = null!;
+        //[ForeignKey("StationId")]
+        //[InverseProperty("ArrivingFlights")]
+        //public virtual Station Station { get; set; } = null!;
     }
 }

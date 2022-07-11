@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using back_end_api.Repository;
 using back_end_api.Repository.Models;
 using back_end_api.Context;
+using back_end_api.Dtos.Logic;
 
 namespace back_end_api.Controllers
 {
@@ -21,6 +22,21 @@ namespace back_end_api.Controllers
         {
             _context = context;
         }
+
+        ////GET: api/StationsOverview
+        //[HttpGet]
+        //public async Task<ActionResult<IEnumerable<StationOverviewDto>>> GetStationsOverview()
+        //{
+        //    if (_context.Stations == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    var lst = new List<StationOverviewDto>();
+        //    foreach (var item in _context.Stations)
+        //    {
+                
+        //    }
+        //}
 
         // GET: api/Stations
         [HttpGet]
@@ -116,6 +132,7 @@ namespace back_end_api.Controllers
 
             return NoContent();
         }
+
 
         private bool StationExists(int id)
         {

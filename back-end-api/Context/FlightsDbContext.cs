@@ -31,41 +31,51 @@ namespace back_end_api.Context
             }
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<ArrivingFlight>(entity =>
-            {
-                entity.HasOne(d => d.Flight)
-                    .WithMany(p => p.ArrivingFlights)
-                    .HasForeignKey(d => d.FlightId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__ArrivingF__Fligh__2B3F6F97");
+        //protected override void OnModelCreating(ModelBuilder modelBuilder)
+        //{
+        //    base.OnModelCreating(modelBuilder);
 
-                entity.HasOne(d => d.Station)
-                    .WithMany(p => p.ArrivingFlights)
-                    .HasForeignKey(d => d.StationId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__ArrivingF__Stati__2C3393D0");
-            });
+        //    modelBuilder.Entity<Flight>(e =>
+        //    {
+        //        e.HasOne(c => c.InStation).WithMany();
+        //    });
+        //}
 
-            modelBuilder.Entity<DepartingFlight>(entity =>
-            {
-                entity.HasOne(d => d.Flight)
-                    .WithMany(p => p.DepartingFlights)
-                    .HasForeignKey(d => d.FlightId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Departing__Fligh__276EDEB3");
+        //protected override void OnModelCreating(ModelBuilder modelBuilder)
+        //{
+        //    modelBuilder.Entity<ArrivingFlight>(entity =>
+        //    {
+        //        entity.HasOne(d => d.Flight)
+        //            .WithMany(p => p.ArrivingFlights)
+        //            .HasForeignKey(d => d.FlightId)
+        //            .OnDelete(DeleteBehavior.ClientSetNull)
+        //            .HasConstraintName("FK__ArrivingF__Fligh__2B3F6F97");
 
-                entity.HasOne(d => d.Station)
-                    .WithMany(p => p.DepartingFlights)
-                    .HasForeignKey(d => d.StationId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Departing__Stati__286302EC");
-            });
+        //        entity.HasOne(d => d.Station)
+        //            .WithMany(p => p.ArrivingFlights)
+        //            .HasForeignKey(d => d.StationId)
+        //            .OnDelete(DeleteBehavior.ClientSetNull)
+        //            .HasConstraintName("FK__ArrivingF__Stati__2C3393D0");
+        //    });
 
-            OnModelCreatingPartial(modelBuilder);
-        }
+        //    modelBuilder.Entity<DepartingFlight>(entity =>
+        //    {
+        //        entity.HasOne(d => d.Flight)
+        //            .WithMany(p => p.DepartingFlights)
+        //            .HasForeignKey(d => d.FlightId)
+        //            .OnDelete(DeleteBehavior.ClientSetNull)
+        //            .HasConstraintName("FK__Departing__Fligh__276EDEB3");
 
-        partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+        //        entity.HasOne(d => d.Station)
+        //            .WithMany(p => p.DepartingFlights)
+        //            .HasForeignKey(d => d.StationId)
+        //            .OnDelete(DeleteBehavior.ClientSetNull)
+        //            .HasConstraintName("FK__Departing__Stati__286302EC");
+        //    });
+
+        //    OnModelCreatingPartial(modelBuilder);
+        //}
+
+        //partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }
