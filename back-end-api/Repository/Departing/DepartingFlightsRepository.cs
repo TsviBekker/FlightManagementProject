@@ -14,5 +14,9 @@ namespace back_end_api.Repository.Departing
         {
             return await context.DepartingFlights.FirstOrDefaultAsync(f => f.FlightId == flightId && f.StationId == stationId);
         }
+        public async Task<IEnumerable<DepartingFlight>> GetHistoryByStationId(int stationId)
+        {
+            return await context.DepartingFlights.Where(df => df.StationId == stationId && df.DepartedAt != null).ToListAsync();
+        }
     }
 }

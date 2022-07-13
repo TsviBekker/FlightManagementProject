@@ -1,6 +1,8 @@
 using back_end_api.Context;
 using back_end_api.ControlCenter;
 using back_end_api.Services;
+using back_end_api.Services.Simulation;
+using back_end_api.Services.Simulation.Wrokers;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,7 +27,11 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddHostedService<BackgroundSimulator>();
+builder.Services.AddHostedService<BackgroundFlightMaker>();
 
+builder.Services.AddTransient<IFlightMaker, FlightMaker>();
+builder.Services.AddTransient<IFlightManager, FlightManager>();
 builder.Services.AddScoped<IControlCenter, ControlCenter>();
 
 var app = builder.Build();

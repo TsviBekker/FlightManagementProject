@@ -6,5 +6,6 @@ namespace back_end_api.Repository.FlightRepo
 {
     public interface IFlightRepository : IGenericRepository<Flight>
     {
+        Task<int> GetIdByCode(string code);
     }
 }

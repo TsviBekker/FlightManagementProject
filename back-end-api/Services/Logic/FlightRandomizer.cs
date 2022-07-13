@@ -14,7 +14,7 @@
 
         public static int GeneratePrepTime()
         {
-            return random.Next(5, 60);
+            return random.Next(5, 15);
         }
     }
 }

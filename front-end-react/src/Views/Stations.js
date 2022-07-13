@@ -21,7 +21,6 @@ export const Stations = () => {
       fetch(`${BackendApi}BusinessLogic/stations-overview`)
         .then((res) => res.json())
         .then((data) => {
-          console.log("called");
           return setStations(data);
         })
         .catch((err) => console.log(err));
@@ -48,13 +47,7 @@ export const Stations = () => {
 
         <tbody>
           {stations.map((station) => {
-            return (
-              <Station
-                setStations={setStations}
-                key={station.stationId}
-                station={station}
-              />
-            );
+            return <Station key={station.stationId} station={station} />;
           })}
         </tbody>
       </table>
@@ -62,45 +55,50 @@ export const Stations = () => {
   );
 };
 
-const Station = ({ station, onClick, setStations }) => {
-  const [time, setTime] = useState(station.flightInStation?.prepTime || 0);
-  // const [init, setInit] = useState(false);
+const Station = ({ station, onClick }) => {
+  const [time, setTime] = useState(station.flightInStation?.prepTime);
 
   useEffect(() => {
     setTimeout(() => {
-      time > 0 && setTime(time - 1);
-      //ADD HTTP REQUEST ==> SENDING FLIGHT AWAY FROM STATION
-      if (time <= 0 && station.flightInStation) {
-        //IIFE
-        (async () => {
-          await releaseFlightFrom(
-            station.flightInStation.flightId,
-            station.stationId
-          );
-          await sendFlightTo(
-            station.flightInStation.flightId,
-            station.stationId + 1
-          );
-          await receiveFlightAt(
-            station.flightInStation.flightId,
-            station.stationId + 1
-          );
-          var response = await fetch(
-            `${BackendApi}BusinessLogic/stations-overview`
-          );
-          var data = await response.json();
-          setStations(data);
-        })();
+      if (time > 0) {
+        console.log(station, station.flightInStation.prepTime);
+        setTime(time - 1);
       }
     }, 1000);
-  }, [time]);
+  }, [time, station]);
+
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     //IIFE
+  //     (async () => {
+  //       await releaseFlightFrom(
+  //         station.flightInStation.flightId,
+  //         station.stationId
+  //       );
+
+  //       await sendFlightTo(
+  //         station.flightInStation.flightId,
+  //         station.stationId + 1
+  //       );
+  //       await receiveFlightAt(
+  //         station.flightInStation.flightId,
+  //         station.stationId + 1
+  //       );
+  //     })();
+  //   }, 1000 * station.flightInStation?.prepTime);
+  // }, []);
 
   return (
     <tr onClick={onClick}>
       <td>{station.name}</td>
       <td>{station.flightInStation ? "Unavailable" : "Available"}</td>
       <td>{station.flightInStation ? station.flightInStation.code : "NONE"}</td>
-      <td>{formatTime(time)}</td>
+      <td>
+        {/* {formatTime(time)} */}
+        {station.flightInStation
+          ? formatTime(station.flightInStation?.prepTime)
+          : "NO FLIGHT"}
+      </td>
       <td>
         <StationHistory station={station} />
       </td>

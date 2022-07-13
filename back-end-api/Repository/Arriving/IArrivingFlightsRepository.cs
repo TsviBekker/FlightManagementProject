@@ -6,5 +6,6 @@ namespace back_end_api.Repository.Arriving
     public interface IArrivingFlightsRepository : IGenericRepository<ArrivingFlight>
     {
         Task<ArrivingFlight?> GetByStationAndFlight(int stationId, int flightId);
+        Task<IEnumerable<ArrivingFlight>> GetHistoryByStationId(int stationId);
     }
 }

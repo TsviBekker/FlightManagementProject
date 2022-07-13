@@ -111,5 +111,26 @@ namespace back_end_api.Controllers
                 };
             }).Select(t => t.Result));
         }
+
+        [HttpGet("get-station-history/{stationId:int}")]
+        public async Task<ActionResult<IEnumerable<StationHistoryDto>>?> GetStationHistory(int stationId)
+        {
+            var station = await controlCenter.Stations.Get(stationId);
+            var afs = await controlCenter.ArrivingFlights.GetHistoryByStationId(stationId);
+            var dfs = await controlCenter.DepartingFlights.GetHistoryByStationId(stationId);
+
+            var ret =
+                from af in afs
+                join df in dfs
+                on af.FlightId equals df.FlightId
+                select new StationHistoryDto()
+                {
+                    ArrivedAt = af.ArrivedAt,
+                    DepartedAt = df.DepartedAt,
+                    FlightId = df.FlightId
+                };
+
+            return Ok(ret);
+        }
     }
 }

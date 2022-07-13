@@ -14,5 +14,9 @@ namespace back_end_api.Repository.Arriving
         {
             return await context.ArrivingFlights.FirstOrDefaultAsync(f => f.FlightId == flightId && f.StationId == stationId);
         }
+        public async Task<IEnumerable<ArrivingFlight>> GetHistoryByStationId(int stationId)
+        {
+            return await context.ArrivingFlights.Where(af => af.StationId == stationId && af.ArrivedAt != null).ToListAsync();
+        }
     }
 }
