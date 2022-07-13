@@ -61,7 +61,7 @@ const Station = ({ station, onClick }) => {
   useEffect(() => {
     setTimeout(() => {
       if (time > 0) {
-        console.log(station, station.flightInStation.prepTime);
+        // console.log(station, station.flightInStation.prepTime);
         setTime(time - 1);
       }
     }, 1000);

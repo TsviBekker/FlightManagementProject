@@ -16,7 +16,11 @@ namespace back_end_api.Repository.Arriving
         }
         public async Task<IEnumerable<ArrivingFlight>> GetHistoryByStationId(int stationId)
         {
-            return await context.ArrivingFlights.Where(af => af.StationId == stationId && af.ArrivedAt != null).ToListAsync();
+            return await context.ArrivingFlights.Where(af => af.StationId == stationId).ToListAsync();
+        }
+        public async Task<IEnumerable<ArrivingFlight>?> GetPending()
+        {
+            return await context.ArrivingFlights.Where(af => af.HasArrived == false).ToListAsync();
         }
     }
 }

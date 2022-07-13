@@ -7,5 +7,6 @@ namespace back_end_api.Repository.Departing
     {
         Task<DepartingFlight?> GetByStationAndFlight(int stationId, int flightId);
         Task<IEnumerable<DepartingFlight>> GetHistoryByStationId(int stationId);
+        Task<IEnumerable<DepartingFlight>?> GetPending();
     }
 }

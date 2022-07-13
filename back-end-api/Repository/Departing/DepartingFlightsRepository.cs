@@ -16,7 +16,11 @@ namespace back_end_api.Repository.Departing
         }
         public async Task<IEnumerable<DepartingFlight>> GetHistoryByStationId(int stationId)
         {
-            return await context.DepartingFlights.Where(df => df.StationId == stationId && df.DepartedAt != null).ToListAsync();
+            return await context.DepartingFlights.Where(df => df.StationId == stationId).ToListAsync();
+        }
+        public async Task<IEnumerable<DepartingFlight>?> GetPending()
+        {
+            return await context.DepartingFlights.Where(df => df.HasDeparted == false).ToListAsync();
         }
     }
 }

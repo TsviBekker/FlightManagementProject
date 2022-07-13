@@ -36,15 +36,17 @@ namespace back_end_api.Services.Simulation.Wrokers
                 };
 
                 await controlCenter.Flights.Add(flight);
+                var flights = await controlCenter.Flights.GetAll();
+                var id = flights.Last().FlightId;
 
                 await controlCenter.DepartingFlights.Add(new DepartingFlight()
                 {
-                    FlightId = 2,
+                    FlightId = id + 1,
                     StationId = 1,
                 });
 
                 var station = await controlCenter.Stations.Get(1);
-                station.FlightId = 2;
+                station.FlightId = id + 1;
 
                 await controlCenter.Complete();
             }

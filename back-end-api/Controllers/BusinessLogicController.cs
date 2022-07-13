@@ -132,5 +132,37 @@ namespace back_end_api.Controllers
 
             return Ok(ret);
         }
+
+        [HttpGet("scheduled-flights")]
+        public async Task<ActionResult<IEnumerable<ScheduledFlightDto>>?> GetScheduledFlights()
+        {
+            var dfs = await controlCenter.DepartingFlights.GetPending();
+            if (dfs == null) return NoContent();
+            //var afs = await controlCenter.ArrivingFlights.GetPending();
+            var ret = dfs
+                .Select(df => new ScheduledFlightDto()
+                {
+                    FlightId = df.FlightId,
+                    Flight = controlCenter.Flights.Get(df.FlightId).Result,
+                    From = df.StationId,
+                    To = df.StationId + 1,
+                    Status = $"Pending at station {df.StationId}"
+                })
+                .OrderBy(s => s.FlightId);
+
+            //var ret =
+            //    from af in afs
+            //    join df in dfs
+            //    on af.FlightId equals df.FlightId
+            //    select new ScheduledFlightDto()
+            //    {
+            //        FlightId = af.FlightId,
+            //        From = df.StationId,
+            //        To = af.StationId,
+            //        Status = "Pending"
+            //    };
+
+            return Ok(ret);
+        }
     }
 }
