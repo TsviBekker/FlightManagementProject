@@ -2,7 +2,7 @@
 
 namespace back_end_api.Services.Simulation
 {
-    public class BackgroundFlightMaker: BackgroundService
+    public class BackgroundFlightMaker : BackgroundService
     {
         private readonly IServiceProvider serviceProvider;
         private readonly ILogger<BackgroundSimulator> logger;

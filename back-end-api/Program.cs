@@ -18,7 +18,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<FlightsDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DbConnection"));
-});
+}/*, ServiceLifetime.Transient*/);
 
 builder.Services.AddCors(options =>
 {

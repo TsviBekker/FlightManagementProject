@@ -15,7 +15,8 @@ namespace back_end_api.ControlCenter
         public IStationRepository Stations { get; private set; }
 
         //Context
-        private readonly FlightsDbContext context;
+        private FlightsDbContext context;
+
         //Ctor
         public ControlCenter(FlightsDbContext context)
         {
@@ -26,6 +27,8 @@ namespace back_end_api.ControlCenter
             Stations = new StationRepository(context);
         }
         public Task<int> Complete() => context.SaveChangesAsync();
+
+        //public void InstantiateNewContext() => context = new FlightsDbContext();
 
         public void Dispose()
         {

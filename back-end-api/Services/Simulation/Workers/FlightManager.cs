@@ -1,4 +1,5 @@
-﻿using back_end_api.ControlCenter;
+﻿using back_end_api.Context;
+using back_end_api.ControlCenter;
 using back_end_api.Repository.Models;
 using back_end_api.Services.Logic;
 using back_end_api.Services.Simulation.Mover;
@@ -17,8 +18,6 @@ namespace back_end_api.Services.Simulation.Wrokers
             this.flightMover = flightMover;
         }
 
-
-
         public async Task HandleFlights(CancellationToken cancellationToken)
         {
             while (!cancellationToken.IsCancellationRequested)
@@ -36,9 +35,17 @@ namespace back_end_api.Services.Simulation.Wrokers
                     if (flight.PrepTime == 0 && flight.StationId != null)
                     {
                         flight.PrepTime = FlightRandomizer.GeneratePrepTime();
-                        await flightMover.ReleaseFlightFromAsync(flight, (int)flight.StationId);
-                        await flightMover.SendFlightToAsync(flight, flight.StationId.Value);
-                        await flightMover.RegisterFlightAtAsync(flight, (int)flight.StationId);
+                        Thread thread = new Thread(async () =>
+                        {
+                            //controlCenter.InstantiateNewContext();
+                            flightMover.BeginWork();
+                            await flightMover.ReleaseFlightFromAsync(flight, (int)flight.StationId);
+                            await flightMover.SendFlightToAsync(flight, flight.StationId.Value);
+                            await flightMover.RegisterFlightAtAsync(flight, (int)flight.StationId);
+
+                            //await controlCenter.Dispose();
+                        });
+                        thread.Start();
                     }
                 }
                 await Task.Delay(1000, cancellationToken);

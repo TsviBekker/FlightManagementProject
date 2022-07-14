@@ -18,11 +18,9 @@ namespace back_end_api.Services.Simulation
             {
                 using (var scope = serviceProvider.CreateScope())
                 {
-                    //var flightMaker = scope.ServiceProvider.GetRequiredService<IFlightMaker>();
                     var flightManager = scope.ServiceProvider.GetRequiredService<IFlightManager>();
 
                     await flightManager.HandleFlights(stoppingToken);
-                    //await flightMaker.MakeFlight(stoppingToken);
                 }
             }
 

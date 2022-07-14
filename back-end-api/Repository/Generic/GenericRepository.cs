@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace back_end_api.Repository.Generic
 {
-    public class GenericRepository<T>:IGenericRepository<T> where T : class
+    public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         protected readonly FlightsDbContext context;
         public GenericRepository(FlightsDbContext context)

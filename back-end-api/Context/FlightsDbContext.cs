@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore;
 using back_end_api.Repository.Models;
 
 namespace back_end_api.Context
@@ -24,6 +21,7 @@ namespace back_end_api.Context
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=FlightManagement;Integrated Security=True");
         }
 
         //protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -20,8 +20,6 @@ namespace back_end_api.Services.Simulation.Wrokers
 
         public async Task MakeFlight(CancellationToken cancellationToken)
         {
-            //await Task.Yield();
-
             while (!cancellationToken.IsCancellationRequested)
             {
                 await Task.Delay(30 * 1000, cancellationToken);
