@@ -16,12 +16,20 @@ namespace back_end_api.Services.Simulation
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                using (var scope = serviceProvider.CreateScope())
-                {
-                    var flightManager = scope.ServiceProvider.GetRequiredService<IFlightManager>();
+                #region Explanation
+                // The problem:
+                //  - Singleton services (background service)
+                //  - cannot consume Scoped/Transient services via DI (dep injection)
+                // The Solution:
+                //  - Create a scope inside the singleton service
+                //  - Get required service inside the scope
+                //  - Do your work there....
+                #endregion
 
-                    await flightManager.HandleFlights(stoppingToken);
-                }
+                using var scope = serviceProvider.CreateScope();
+                var flightManager = scope.ServiceProvider.GetRequiredService<IFlightManager>();
+
+                await flightManager.HandleFlights(stoppingToken);
             }
 
         }

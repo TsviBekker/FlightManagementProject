@@ -10,12 +10,12 @@ namespace back_end_api.Services.Simulation.Wrokers
     {
         private readonly IControlCenter controlCenter;
         private readonly ILogger<FlightManager> logger;
-        private readonly IFlightMover flightMover;
-        public FlightManager(IControlCenter controlCenter, ILogger<FlightManager> logger, IFlightMover flightMover)
+        //private readonly IFlightMover flightMover;
+        public FlightManager(IControlCenter controlCenter, ILogger<FlightManager> logger/*, IFlightMover flightMover*/)
         {
             this.controlCenter = controlCenter;
             this.logger = logger;
-            this.flightMover = flightMover;
+            //this.flightMover = flightMover;
         }
 
         public async Task HandleFlights(CancellationToken cancellationToken)
@@ -23,7 +23,6 @@ namespace back_end_api.Services.Simulation.Wrokers
             while (!cancellationToken.IsCancellationRequested)
             {
                 logger.LogInformation("Handling Flight");
-                //var flights = await controlCenter.Flights.GetAll();
                 foreach (var flight in await controlCenter.Flights.GetAll())
                 {
                     if (flight.PrepTime > 0 && flight.StationId != null)
@@ -34,16 +33,27 @@ namespace back_end_api.Services.Simulation.Wrokers
                     }
                     if (flight.PrepTime == 0 && flight.StationId != null)
                     {
+                        #region Explaining a problem:
+                        // The problem:
+                        //  - asnc/await methods take a long time to complete...
+                        //  - because they run on the same thread
+                        // Solution:
+                        //  - using a thread 
+                        // The problem:
+                        //  - DbContext is not thread safe
+                        // The solution:
+                        //  - instatntiate a new DbContext in each thread
+                        //  - by calling the constructor method or mover class
+                        #endregion
+
                         flight.PrepTime = FlightRandomizer.GeneratePrepTime();
                         Thread thread = new Thread(async () =>
                         {
-                            //controlCenter.InstantiateNewContext();
-                            flightMover.BeginWork();
+                            var flightMover = new FlightMover();
+
                             await flightMover.ReleaseFlightFromAsync(flight, (int)flight.StationId);
                             await flightMover.SendFlightToAsync(flight, flight.StationId.Value);
                             await flightMover.RegisterFlightAtAsync(flight, (int)flight.StationId);
-
-                            //await controlCenter.Dispose();
                         });
                         thread.Start();
                     }

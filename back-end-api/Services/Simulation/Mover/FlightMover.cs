@@ -8,9 +8,9 @@ namespace back_end_api.Services.Simulation.Mover
     {
         private IControlCenter controlCenter;
         //private readonly FlightsDbContext context;
-        public FlightMover(IControlCenter controlCenter/*, FlightsDbContext context*/)
+        public FlightMover()
         {
-            this.controlCenter = controlCenter;
+            controlCenter = new ControlCenter.ControlCenter(new FlightsDbContext());
             //this.context = context;
         }
 

@@ -6,13 +6,12 @@ using back_end_api.Repository.StationRepo;
 
 namespace back_end_api.ControlCenter
 {
-    public interface IControlCenter /*: IDisposable*/
+    public interface IControlCenter
     { //Unit of work design pattern
         IArrivingFlightsRepository ArrivingFlights { get; }
         IDepartingFlightsRepository DepartingFlights { get; }
         IFlightRepository Flights { get; }
         IStationRepository Stations { get; }
-        //void InstantiateNewContext();
         Task<int> Complete();
     }
 }
