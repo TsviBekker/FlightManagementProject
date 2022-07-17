@@ -1,13 +1,7 @@
-import React, { useContext, useRef } from "react";
+import React from "react";
 import { useEffect, useState } from "react";
 import { StationHistory } from "../Components/Modal/Modal";
 import { BackendApi } from "../Constants/Constants";
-import { StationsContext } from "../Contexts/StationsContext";
-import {
-  receiveFlightAt,
-  releaseFlightFrom,
-  sendFlightTo,
-} from "../Modules/flightManager";
 
 const formatTime = (seconds) => {
   return `${seconds > 60 ? seconds / 60 + "min" : ""} ${seconds % 60}sec`;
@@ -27,10 +21,6 @@ export const Stations = () => {
     }, 1000);
     return () => clearTimeout(timout);
   }, [stations]);
-
-  // const stations = useContext(StationsContext);
-
-  // console.log(stations);
 
   return (
     <div>

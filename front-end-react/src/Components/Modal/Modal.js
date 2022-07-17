@@ -4,6 +4,7 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { BackendApi } from "../../Constants/Constants";
+import { formatDateTime } from "../../Utils/Utils";
 
 const style = {
   position: "absolute",
@@ -15,23 +16,6 @@ const style = {
   border: "2px solid #000",
   boxShadow: 24,
   p: 4,
-};
-
-const formatDateTime = (date) => {
-  const m = new Date(date);
-  const dateString =
-    m.getUTCHours() +
-    ":" +
-    m.getUTCMinutes() +
-    ":" +
-    m.getUTCSeconds() +
-    " " +
-    m.getUTCDate() +
-    "/" +
-    m.getUTCMonth() +
-    "/" +
-    m.getUTCFullYear();
-  return dateString;
 };
 
 export const StationHistory = ({ station }) => {
@@ -64,7 +48,7 @@ export const StationHistory = ({ station }) => {
                 <th>Departed At</th>
               </tr>
             </thead>
-            {history.length != 0
+            {history.length !== 0
               ? history.map((h) => {
                   return (
                     <tr>
