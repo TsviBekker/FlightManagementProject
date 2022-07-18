@@ -9,5 +9,10 @@ namespace back_end_api.Repository.StationRepo
         public StationRepository(FlightsDbContext context) : base(context)
         {
         }
+
+        public IEnumerable<Station> GetAvailable()
+        {
+            return context.Stations.Where(s => s.FlightId == null);
+        }
     }
 }

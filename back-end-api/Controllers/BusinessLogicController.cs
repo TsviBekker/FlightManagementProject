@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace back_end_api.Controllers
 {
     [Route("api/[controller]")]
@@ -17,101 +16,37 @@ namespace back_end_api.Controllers
         {
             this.controlCenter = controlCenter;
         }
-
-        [HttpGet("receive-flight-at/{flightId:int}&{stationId:int}")]
-        public async Task<IActionResult> ReceiveFlightAt(int flightId, int stationId)
-        {
-            var flight = await controlCenter.Flights.Get(flightId);
-            var station = await controlCenter.Stations.Get(stationId);
-            if (flight == null || station == null) return BadRequest();
-            //What needs to be done???
-            //1. update flight.station and station.flight
-            flight.StationId = stationId;
-            station.FlightId = flightId;
-            controlCenter.Flights.Update(flight);
-            controlCenter.Stations.Update(station);
-            //2. update arriving flight to done and update datetime
-            var af = await controlCenter.ArrivingFlights.GetByStationAndFlight(stationId, flightId);
-            if (af == null) throw new Exception("NO AF FOUND"); //HANDLE EXCEPTIONS LATER
-            af.HasArrived = true;
-            af.ArrivedAt = DateTime.Now;
-            controlCenter.ArrivingFlights.Update(af);
-            //3. create new departing flight
-            await controlCenter.DepartingFlights.Add(new DepartingFlight()
-            {
-                FlightId = flightId,
-                StationId = stationId,
-                HasDeparted = false
-            });
-            //4. save changes
-            await controlCenter.Complete();
-            return Ok();
-        }
-
-        [HttpGet("send-flight-to/{flightId:int}&{stationId:int}")]
-        public async Task<IActionResult> SendFlightTo(int flightId, int stationId)
-        {
-            var flight = await controlCenter.Flights.Get(flightId);
-            var station = await controlCenter.Stations.Get(stationId);
-            if (flight == null || station == null) return BadRequest();
-            //What needs to be done???
-            //1. create new arriving flight to next station
-            await controlCenter.ArrivingFlights.Add(new ArrivingFlight()
-            {
-                FlightId = flightId,
-                StationId = stationId,
-                HasArrived = false
-            });
-            ////2. update next station's flight ?!?!?! (should it be done now or once plane arrives)
-            station.FlightId = flightId;
-            flight.StationId = stationId;
-            controlCenter.Flights.Update(flight);
-            controlCenter.Stations.Update(station);
-            //3. save changes
-            await controlCenter.Complete();
-
-            return Ok();
-        }
-
-        [HttpGet("release-flight-from/{flightId:int}&{stationId:int}")]
-        public async Task<IActionResult> ReleaseFlight(int flightId, int stationId)
-        {
-            var flight = await controlCenter.Flights.Get(flightId);
-            var station = await controlCenter.Stations.Get(stationId);
-            if (flight == null || station == null) return BadRequest();
-            //What needs to be done???
-            //1. remove flight from current station
-            station.FlightId = null;
-            flight.StationId = flight.StationId + 1;
-            controlCenter.Stations.Update(station);
-            controlCenter.Flights.Update(flight);
-            //2. update departing flight to complete and update its time
-            var df = await controlCenter.DepartingFlights.GetByStationAndFlight(stationId, flightId);
-            if (df == null) throw new Exception("No DF found"); //change this later
-            df.HasDeparted = true;
-            df.DepartedAt = DateTime.Now;
-            controlCenter.DepartingFlights.Update(df);
-            //3. save changes
-            await controlCenter.Complete();
-            return Ok();
-        }
-
+        /// <summary>
+        /// Get a snapshot of the airport stations
+        /// </summary>
+        /// <returns>Collection of StationOverviewDto</returns>
         [HttpGet("stations-overview")]
         public async Task<ActionResult<IEnumerable<StationOverviewDto>>> GetStations()
         {
             var stations = await controlCenter.Stations.GetAll();
-            return Ok(stations.Select(async s =>
-            {
-                return new StationOverviewDto()
+
+            //.Select = .map method in js
+            var ret =
+                stations.Select(async s =>
                 {
-                    FlightInStation = s.FlightId != null ? await controlCenter.Flights.Get((int)s.FlightId) : null,
-                    IsAvailable = s.FlightId == null,
-                    StationId = s.StationId,
-                    Name = s.Name
-                };
-            }).Select(t => t.Result));
+                    return new StationOverviewDto()
+                    {
+                        //if no flight in station return null else get the flight
+                        FlightInStation = s.FlightId != null ? await controlCenter.Flights.Get((int)s.FlightId) : null,
+                        IsAvailable = s.FlightId == null,
+                        StationId = s.StationId,
+                        Name = s.Name
+                    };
+                }).Select(t => t.Result);      //since we are getting a task (using async/await) we have to get each result
+
+            return Ok(ret);
         }
 
+        /// <summary>
+        /// Get the history (flights who come and go) of a station
+        /// </summary>
+        /// <param name="stationId">The specified id of a station</param>
+        /// <returns>Collection of StationHistoryDto</returns>
         [HttpGet("get-station-history/{stationId:int}")]
         public async Task<ActionResult<IEnumerable<StationHistoryDto>>?> GetStationHistory(int stationId)
         {
@@ -119,6 +54,8 @@ namespace back_end_api.Controllers
             var afs = await controlCenter.ArrivingFlights.GetHistoryByStationId(stationId);
             var dfs = await controlCenter.DepartingFlights.GetHistoryByStationId(stationId);
 
+            // 1. Make a query that join arriving and departing flights on FlightId
+            // 2. Map query results into StationHistoryDto
             var ret =
                 from af in afs
                 join df in dfs
@@ -136,9 +73,10 @@ namespace back_end_api.Controllers
         [HttpGet("scheduled-flights")]
         public async Task<ActionResult<IEnumerable<ScheduledFlightDto>>?> GetScheduledFlights()
         {
-            var dfs = await controlCenter.DepartingFlights.GetPending();
+            var dfs = await controlCenter.DepartingFlights.GetPending();    //gets flights that haven't left yet
+
             if (dfs == null) return NoContent();
-            //var afs = await controlCenter.ArrivingFlights.GetPending();
+
             var ret = dfs
                 .Select(df => new ScheduledFlightDto()
                 {
@@ -150,17 +88,50 @@ namespace back_end_api.Controllers
                 })
                 .OrderBy(s => s.FlightId);
 
-            //var ret =
-            //    from af in afs
-            //    join df in dfs
-            //    on af.FlightId equals df.FlightId
-            //    select new ScheduledFlightDto()
-            //    {
-            //        FlightId = af.FlightId,
-            //        From = df.StationId,
-            //        To = af.StationId,
-            //        Status = "Pending"
-            //    };
+            return Ok(ret);
+        }
+
+        [HttpGet("flights-history")]
+        public async Task<ActionResult<IEnumerable<FlightHistoryDto>>?> GetFlightsHistory()
+        {
+            var flights = await controlCenter.Flights.GetAll();
+            var stations = await controlCenter.Stations.GetAll();
+            var afs = await controlCenter.ArrivingFlights.GetAll();
+            var dfs = await controlCenter.DepartingFlights.GetAll();
+
+            #region SQL query
+            //  select Code, D.StationId as 'FROM', A.StationId as 'TO', ArrivedAt
+            //  from Flights F, ArrivingFlights A, DepartingFlights D, Stations S
+            //
+            //where
+            //    F.FlightId = A.FlightId
+            //  and F.FlightId = D.FlightId
+            //  and A.FlightId = D.FlightId
+            //  and A.StationId = S.StationId
+            //  and D.StationId = S.StationId - 1
+            //  order by Code
+            #endregion
+
+            var ret =
+                (
+                from f in flights
+                join af in afs on f.FlightId equals af.FlightId
+                join df in dfs on f.FlightId equals df.FlightId
+                join s in stations on af.StationId equals s.StationId
+                where f.FlightId == af.FlightId
+                where f.FlightId == df.FlightId
+                where af.FlightId == df.FlightId
+                where af.StationId == s.StationId
+                where df.StationId == s.StationId - 1
+                select new FlightHistoryDto()
+                {
+                    FlightId = f.FlightId,
+                    Code = f.Code,
+                    From = df.StationId,
+                    To = af.StationId,
+                    ArrivedAt = af.ArrivedAt
+                }
+                ).OrderBy(x => x.Code);
 
             return Ok(ret);
         }

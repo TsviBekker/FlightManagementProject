@@ -18,11 +18,4 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Dtos\Flight\" />
-    <Folder Include="Dtos\DepartingFlight\" />
-    <Folder Include="Dtos\ArrivingFlight\" />
-    <Folder Include="Dtos\Station\" />
-  </ItemGroup>
-
 </Project>

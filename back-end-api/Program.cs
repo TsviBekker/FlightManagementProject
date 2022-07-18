@@ -36,6 +36,18 @@ builder.Services.AddTransient<IFlightManager, FlightManager>();
 builder.Services.AddTransient<IFlightMover, FlightMover>();
 builder.Services.AddScoped<IControlCenter, ControlCenter>();
 
+builder.WebHost.ConfigureLogging((context, logging) =>
+{
+    var env = context.HostingEnvironment;
+    var config = context.Configuration.GetSection("Logging");
+
+    logging.AddConfiguration(config);
+    logging.AddConsole();
+
+    logging.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning);
+    logging.AddFilter("Microsoft.EntityFrameworkCore.Infrastructure", LogLevel.Warning);
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

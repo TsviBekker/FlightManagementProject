@@ -5,7 +5,7 @@ VisualStudioVersion = 17.1.32228.430
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "front-end-react", "front-end-react\front-end-react.esproj", "{681C8FBE-0811-4164-82CC-AC6117122D67}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "back-end-api", "back-end-api\back-end-api.csproj", "{F8D93D97-0C84-4B40-8487-EC224370A33C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "back-end-api", "back-end-api\back-end-api.csproj", "{F8D93D97-0C84-4B40-8487-EC224370A33C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

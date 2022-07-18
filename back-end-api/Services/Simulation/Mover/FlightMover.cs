@@ -1,17 +1,16 @@
 ﻿using back_end_api.Context;
 using back_end_api.ControlCenter;
 using back_end_api.Repository.Models;
+using back_end_api.Services.Logic;
 
 namespace back_end_api.Services.Simulation.Mover
 {
     public class FlightMover : IFlightMover
     {
         private IControlCenter controlCenter;
-        //private readonly FlightsDbContext context;
         public FlightMover()
         {
             controlCenter = new ControlCenter.ControlCenter(new FlightsDbContext());
-            //this.context = context;
         }
 
         public void BeginWork()
@@ -34,7 +33,9 @@ namespace back_end_api.Services.Simulation.Mover
             controlCenter.DepartingFlights.Update(df);
             //2. remove flight from current station
             station.FlightId = null;
+            //flight.StationId = FlightRandomizer.GenerateNextStation(controlCenter); //++++++++++++++++
             flight.StationId++;
+
             controlCenter.Stations.Update(station);
             controlCenter.Flights.Update(flight);
             //3. save changes

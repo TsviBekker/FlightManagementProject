@@ -5,5 +5,6 @@ namespace back_end_api.Repository.StationRepo
 {
     public interface IStationRepository : IGenericRepository<Station>
     {
+        IEnumerable<Station> GetAvailable();
     }
 }

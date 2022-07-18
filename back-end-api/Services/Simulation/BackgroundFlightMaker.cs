@@ -5,11 +5,9 @@ namespace back_end_api.Services.Simulation
     public class BackgroundFlightMaker : BackgroundService
     {
         private readonly IServiceProvider serviceProvider;
-        private readonly ILogger<BackgroundSimulator> logger;
-        public BackgroundFlightMaker(IServiceProvider serviceProvider, ILogger<BackgroundSimulator> logger)
+        public BackgroundFlightMaker(IServiceProvider serviceProvider)
         {
             this.serviceProvider = serviceProvider;
-            this.logger = logger;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
